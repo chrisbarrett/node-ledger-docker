@@ -1,9 +1,8 @@
 FROM node:6.10
 
-VOLUME /mnt/config
-
 EXPOSE 3000
 EXPOSE 3001
+VOLUME /mnt/ledger
 
 RUN apt-get update && \
     apt-get install -y ledger && \
@@ -15,11 +14,12 @@ RUN apt-get update && \
 RUN git clone --depth 1 https://github.com/slashdotdash/node-ledger-web
 
 WORKDIR node-ledger-web
-RUN ln -s /mnt/config/config.json  config.json
 
 RUN npm install
 RUN npm install --global bower grunt-cli
 RUN bower --allow-root install
 RUN grunt
 
-CMD ["node", "app.js"]
+COPY config.json .
+
+CMD node app.js
